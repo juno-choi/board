@@ -33,6 +33,8 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.5.0")
 	implementation("org.springframework:spring-aop:6.0.11")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	testImplementation("org.springframework.security:spring-security-test")
 }
 
 tasks.withType<Test> {
