@@ -1,4 +1,4 @@
-package com.juno.simple.config;
+package com.juno.simple.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

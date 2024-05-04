@@ -1,7 +1,9 @@
 package com.juno.simple.member.controller;
 
 import com.juno.simple.member.domain.dto.JoinRequest;
+import com.juno.simple.member.domain.dto.LoginRequest;
 import com.juno.simple.member.domain.response.JoinResponse;
+import com.juno.simple.member.domain.response.LoginResponse;
 import com.juno.simple.member.service.MemberService;
 import com.juno.simple.global.api.Response;
 import com.juno.simple.global.api.ResponseEnums;
@@ -41,6 +43,24 @@ public class MemberController {
                     .message(ResponseEnums.SUCCESS.message)
                     .data(response)
                     .build()
+        );
+    }
+
+    @PostMapping("/login")
+    @Operation(summary = "로그인", description = "로그인 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "403", description = "로그인 실패", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+    })
+    public ResponseEntity<Response<LoginResponse>> login (@RequestBody @Validated LoginRequest loginRequest, BindingResult bindingResult) {
+        LoginResponse response = memberService.login(loginRequest);
+        return ResponseEntity.ok(
+                Response.<LoginResponse>builder()
+                        .code(ResponseEnums.SUCCESS.code)
+                        .message(ResponseEnums.SUCCESS.message)
+                        .data(response)
+                        .build()
         );
     }
 }
