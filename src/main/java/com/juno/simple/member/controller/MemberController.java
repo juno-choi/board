@@ -4,24 +4,24 @@ import com.juno.simple.member.domain.dto.JoinRequest;
 import com.juno.simple.member.domain.dto.LoginRequest;
 import com.juno.simple.member.domain.response.JoinResponse;
 import com.juno.simple.member.domain.response.LoginResponse;
+import com.juno.simple.member.domain.response.MemberResponse;
 import com.juno.simple.member.service.MemberService;
 import com.juno.simple.global.api.Response;
 import com.juno.simple.global.api.ResponseEnums;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/member")
@@ -62,5 +62,23 @@ public class MemberController {
                         .data(response)
                         .build()
         );
+    }
+
+    @GetMapping("/{member_id}")
+    @Operation(summary = "회원정보 가져오기", description = "회원정보 가져오기 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+    })
+    public ResponseEntity<Response<MemberResponse>> getMember(@PathVariable(name = "member_id") @Schema(description = "회원 번호", example = "1") @Validated @NotNull Long memberId) {
+        MemberResponse response = memberService.getMember(memberId);
+        return ResponseEntity.ok(
+                Response.<MemberResponse>builder()
+                        .code(ResponseEnums.SUCCESS.code)
+                        .message(ResponseEnums.SUCCESS.message)
+                        .data(response)
+                        .build()
+        );
+
     }
 }

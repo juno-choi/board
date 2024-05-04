@@ -5,6 +5,7 @@ import com.juno.simple.member.domain.dto.LoginRequest;
 import com.juno.simple.member.domain.entity.MemberEntity;
 import com.juno.simple.member.domain.response.JoinResponse;
 import com.juno.simple.member.domain.response.LoginResponse;
+import com.juno.simple.member.domain.response.MemberResponse;
 import com.juno.simple.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Service
@@ -37,9 +37,7 @@ public class MemberService {
         //  회원가입
         MemberEntity saveMember = memberRepository.save(joinRequest.toEntity());
 
-        return JoinResponse.builder()
-                .memberId(saveMember.getMemberId())
-                .build();
+        return JoinResponse.from(saveMember);
     }
 
     public LoginResponse login(LoginRequest loginRequest) {
@@ -50,12 +48,12 @@ public class MemberService {
         Long memberId = Long.valueOf(name);
         MemberEntity findMember = memberRepository.findById(memberId).get();
 
-        return LoginResponse.builder()
-                .memberId(findMember.getMemberId())
-                .email(findMember.getEmail())
-                .name(findMember.getName())
-                .createdAt(findMember.getCreatedAt())
-                .modifiedAt(findMember.getModifiedAt())
-                .build();
+        return LoginResponse.from(findMember);
+    }
+
+    public MemberResponse getMember(Long memberId) {
+        MemberEntity findMember = memberRepository.findById(memberId).orElseThrow(
+                () -> new IllegalArgumentException("유효하지 않는 회원입니다."));
+        return MemberResponse.from(findMember);
     }
 }
