@@ -1,5 +1,7 @@
 package com.juno.simple.board.domain;
 
+import com.juno.simple.board.domain.dto.BoardPutRequest;
+import com.juno.simple.member.domain.entity.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +21,11 @@ public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
-    private Long memberId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
+
     private String title;
     private String content;
 
@@ -28,11 +34,18 @@ public class BoardEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-        this.modifiedAt = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.modifiedAt = now;
     }
     @PreUpdate
     public void preUpdate() {
+        this.modifiedAt = LocalDateTime.now();
+    }
+
+    public void put(BoardPutRequest boardPutRequest) {
+        this.title = boardPutRequest.getTitle();
+        this.content = boardPutRequest.getContent();
         this.modifiedAt = LocalDateTime.now();
     }
 }
