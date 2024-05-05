@@ -1,6 +1,7 @@
 package com.juno.simple.board.controller;
 
 import com.juno.simple.board.domain.dto.BoardPostRequest;
+import com.juno.simple.board.domain.dto.BoardPutRequest;
 import com.juno.simple.board.domain.response.BoardListResponse;
 import com.juno.simple.board.domain.response.BoardResponse;
 import com.juno.simple.board.service.BoardService;
@@ -33,7 +34,7 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("")
-    @Operation(summary = "게시글 등록", description = "게시판 api")
+    @Operation(summary = "게시글 등록", description = "게시글 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -50,7 +51,7 @@ public class BoardController {
     }
 
     @GetMapping("/list")
-    @Operation(summary = "게시글 전체 조회", description = "게시판 전체 조회 api")
+    @Operation(summary = "게시글 전체 조회", description = "게시글 전체 조회 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -70,7 +71,7 @@ public class BoardController {
     }
 
     @GetMapping("/{board_id}")
-    @Operation(summary = "게시글 상세 조회", description = "게시판 상세 조회 api")
+    @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 api")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -81,6 +82,23 @@ public class BoardController {
                                                        @NotNull
                                                        Long boardId) {
         BoardResponse response = boardService.getBoard(boardId);
+        return ResponseEntity.ok(
+                Response.<BoardResponse>builder()
+                        .code(ResponseEnums.SUCCESS.code)
+                        .message(ResponseEnums.SUCCESS.message)
+                        .data(response)
+                        .build()
+        );
+    }
+
+    @PutMapping("")
+    @Operation(summary = "게시글 수정", description = "게시글 수정 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+    })
+    public ResponseEntity<Response<BoardResponse>> patch(@RequestBody @Validated BoardPutRequest boardPutRequest, BindingResult bindingResult) {
+        BoardResponse response = boardService.putBoard(boardPutRequest);
         return ResponseEntity.ok(
                 Response.<BoardResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)

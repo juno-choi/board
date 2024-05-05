@@ -2,6 +2,7 @@ package com.juno.simple.board.service;
 
 import com.juno.simple.board.domain.BoardEntity;
 import com.juno.simple.board.domain.dto.BoardPostRequest;
+import com.juno.simple.board.domain.dto.BoardPutRequest;
 import com.juno.simple.board.domain.response.BoardListResponse;
 import com.juno.simple.board.domain.response.BoardResponse;
 import com.juno.simple.board.repository.BoardRepository;
@@ -48,6 +49,20 @@ public class BoardService {
     public BoardResponse getBoard(Long boardId) {
         BoardEntity findBoard = boardRepository.findById(boardId).orElseThrow(
                 () -> new IllegalArgumentException("등록되지 않은 게시글입니다."));
+        return BoardResponse.from(findBoard);
+    }
+
+    @Transactional
+    public BoardResponse putBoard(BoardPutRequest boardPutRequest) {
+        BoardEntity findBoard = boardRepository.findById(boardPutRequest.getBoardId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는게시글입니다.")
+        );
+
+        if (!boardPutRequest.equalsMember(findBoard)) {
+            throw new IllegalArgumentException("게시글 등록자만 수정 가능합니다.");
+        }
+
+        findBoard.put(boardPutRequest);
         return BoardResponse.from(findBoard);
     }
 }
