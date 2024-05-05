@@ -1,5 +1,6 @@
 package com.juno.simple.member.service;
 
+import com.juno.simple.config.security.TokenProvider;
 import com.juno.simple.member.domain.dto.JoinRequest;
 import com.juno.simple.member.domain.dto.LoginRequest;
 import com.juno.simple.member.domain.entity.MemberEntity;
@@ -7,6 +8,7 @@ import com.juno.simple.member.domain.response.JoinResponse;
 import com.juno.simple.member.domain.response.LoginResponse;
 import com.juno.simple.member.domain.response.MemberResponse;
 import com.juno.simple.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -24,6 +26,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     public JoinResponse join(JoinRequest joinRequest) {
@@ -44,11 +47,8 @@ public class MemberService {
         UsernamePasswordAuthenticationToken authenticationToken = loginRequest.toAuthentication();
         // security에 구현한 MyUserDetailsService 실행됨
         Authentication authenticate = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        String name = authenticate.getName();
-        Long memberId = Long.valueOf(name);
-        MemberEntity findMember = memberRepository.findById(memberId).get();
-
-        return LoginResponse.from(findMember);
+        // 토큰 생성
+        return tokenProvider.createToken(authenticate);
     }
 
     public MemberResponse getMember(Long memberId) {

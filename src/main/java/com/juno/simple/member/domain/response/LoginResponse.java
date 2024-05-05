@@ -13,19 +13,9 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record LoginResponse (
-        @JsonProperty("member_id") Long memberId,
-        String email,
-        String name,
-        @JsonProperty("created_at") LocalDateTime createdAt,
-        @JsonProperty("modified_at") LocalDateTime modifiedAt
+        @JsonProperty("access_token") String accessToken,
+        @JsonProperty("refresh_token") String refreshToken,
+        @JsonProperty("access_token_expired") Long accessTokenExpired,
+        @JsonProperty("refresh_token_expired") Long refreshTokenExpired
 ){
-    public static LoginResponse from(MemberEntity findMember) {
-        return LoginResponse.builder()
-                .memberId(findMember.getMemberId())
-                .email(findMember.getEmail())
-                .name(findMember.getName())
-                .createdAt(findMember.getCreatedAt())
-                .modifiedAt(findMember.getModifiedAt())
-                .build();
-    }
 }
