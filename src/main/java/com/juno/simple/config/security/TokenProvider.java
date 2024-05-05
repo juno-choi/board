@@ -72,6 +72,9 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new IllegalArgumentException("유효하지 않은 token 입니다.");
+        }
         token = token.replace("Bearer ", "");
         // key 생성
         byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret-key"));

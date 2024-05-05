@@ -15,9 +15,7 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardPostRequest {
-    @Schema(description = "회원번호", example = "1")
-    @NotNull(message = "회원번호는 비어있을 수 없습니다.")
-    private Long memberId;
+
     @Schema(description = "제목", example = "심플 게시판")
     @NotNull(message = "제목은 비어있을 수 없습니다.")
     private String title;

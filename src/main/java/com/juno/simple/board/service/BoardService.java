@@ -6,11 +6,14 @@ import com.juno.simple.board.domain.dto.BoardPutRequest;
 import com.juno.simple.board.domain.response.BoardListResponse;
 import com.juno.simple.board.domain.response.BoardResponse;
 import com.juno.simple.board.repository.BoardRepository;
+import com.juno.simple.config.security.TokenProvider;
 import com.juno.simple.member.domain.entity.MemberEntity;
 import com.juno.simple.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,10 +26,13 @@ import java.util.stream.Collectors;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
+    private final TokenProvider tokenProvider;
 
     @Transactional
-    public BoardResponse postBoard (BoardPostRequest boardPostRequest) {
-        MemberEntity findMember = memberRepository.findById(boardPostRequest.getMemberId()).orElseThrow(
+    public BoardResponse postBoard (BoardPostRequest boardPostRequest, HttpServletRequest request) {
+        Authentication authorization = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        Long memberId = Long.parseLong(authorization.getName());
+        MemberEntity findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         BoardEntity saveBoard = boardRepository.save(boardPostRequest.toEntity(findMember));
         return BoardResponse.from(saveBoard);

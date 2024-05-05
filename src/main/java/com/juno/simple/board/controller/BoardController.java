@@ -12,7 +12,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @RestController
 @RequestMapping("/api/board")
 @Tag(name = "Board API", description = "Board API Documentation")
@@ -34,13 +38,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("")
-    @Operation(summary = "게시글 등록", description = "게시글 api")
+    @Operation(summary = "게시글 등록", description = "게시글 api", security = @SecurityRequirement(name = AUTHORIZATION))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
     })
-    public ResponseEntity<Response<BoardResponse>> post(@RequestBody @Validated BoardPostRequest boardPostRequest, BindingResult bindingResult) {
-        BoardResponse response = boardService.postBoard(boardPostRequest);
+    public ResponseEntity<Response<BoardResponse>> post(@RequestBody @Validated BoardPostRequest boardPostRequest, BindingResult bindingResult, HttpServletRequest request) {
+        BoardResponse response = boardService.postBoard(boardPostRequest, request);
         return ResponseEntity.ok(
                 Response.<BoardResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)
