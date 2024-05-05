@@ -8,6 +8,7 @@ import com.juno.simple.member.domain.response.JoinResponse;
 import com.juno.simple.member.domain.response.LoginResponse;
 import com.juno.simple.member.domain.response.MemberResponse;
 import com.juno.simple.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,7 +52,9 @@ public class MemberService {
         return tokenProvider.createToken(authenticate);
     }
 
-    public MemberResponse getMember(Long memberId) {
+    public MemberResponse getMember(HttpServletRequest request) {
+        Authentication authorization = tokenProvider.getAuthentication(request.getHeader("Authorization"));
+        Long memberId = Long.parseLong(authorization.getName());
         MemberEntity findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("유효하지 않는 회원입니다."));
         return MemberResponse.from(findMember);

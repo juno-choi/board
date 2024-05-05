@@ -13,7 +13,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -65,14 +67,14 @@ public class MemberController {
         );
     }
 
-    @GetMapping("/{member_id}")
-    @Operation(summary = "회원정보 가져오기", description = "회원정보 가져오기 api")
+    @GetMapping("")
+    @Operation(summary = "회원정보 가져오기", description = "회원정보 가져오기 api", security = @SecurityRequirement(name = "Authorization"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
     })
-    public ResponseEntity<Response<MemberResponse>> getMember(@PathVariable(name = "member_id") @Schema(description = "회원 번호", example = "1") @Validated @NotNull Long memberId) {
-        MemberResponse response = memberService.getMember(memberId);
+    public ResponseEntity<Response<MemberResponse>> get(HttpServletRequest request) {
+        MemberResponse response = memberService.getMember(request);
         return ResponseEntity.ok(
                 Response.<MemberResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)

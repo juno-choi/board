@@ -72,6 +72,7 @@ public class TokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
+        token = token.replace("Bearer ", "");
         // key 생성
         byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.secret-key"));
         Key key = Keys.hmacShaKeyFor(keyBytes);
