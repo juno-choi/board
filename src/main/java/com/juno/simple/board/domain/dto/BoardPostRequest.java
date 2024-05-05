@@ -1,6 +1,7 @@
 package com.juno.simple.board.domain.dto;
 
 import com.juno.simple.board.domain.BoardEntity;
+import com.juno.simple.member.domain.entity.MemberEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,9 @@ public class BoardPostRequest {
     @NotNull(message = "내용은 비어있을 수 없습니다.")
     private String content;
 
-    public BoardEntity toEntity() {
+    public BoardEntity toEntity(MemberEntity member) {
         return BoardEntity.builder()
-                .memberId(memberId)
+                .member(member)
                 .title(title)
                 .content(content)
                 .build();

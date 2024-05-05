@@ -1,5 +1,6 @@
 package com.juno.simple.board.domain;
 
+import com.juno.simple.member.domain.entity.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,11 @@ public class BoardEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
-    private Long memberId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity member;
+
     private String title;
     private String content;
 
