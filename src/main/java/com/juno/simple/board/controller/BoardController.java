@@ -8,9 +8,11 @@ import com.juno.simple.global.api.Response;
 import com.juno.simple.global.api.ResponseEnums;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +62,27 @@ public class BoardController {
         BoardListResponse response = boardService.getBoardList(pageable);
         return ResponseEntity.ok(
                 Response.<BoardListResponse>builder()
+                        .code(ResponseEnums.SUCCESS.code)
+                        .message(ResponseEnums.SUCCESS.message)
+                        .data(response)
+                        .build()
+        );
+    }
+
+    @GetMapping("/{board_id}")
+    @Operation(summary = "게시글 상세 조회", description = "게시판 상세 조회 api")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+    })
+    public ResponseEntity<Response<BoardResponse>> get(@PathVariable(name = "board_id")
+                                                       @Schema(description = "게시글 번호", example = "1")
+                                                       @Validated
+                                                       @NotNull
+                                                       Long boardId) {
+        BoardResponse response = boardService.getBoard(boardId);
+        return ResponseEntity.ok(
+                Response.<BoardResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)
                         .message(ResponseEnums.SUCCESS.message)
                         .data(response)

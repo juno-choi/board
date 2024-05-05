@@ -44,4 +44,10 @@ public class BoardService {
                 .list(list)
                 .build();
     }
+
+    public BoardResponse getBoard(Long boardId) {
+        BoardEntity findBoard = boardRepository.findById(boardId).orElseThrow(
+                () -> new IllegalArgumentException("등록되지 않은 게시글입니다."));
+        return BoardResponse.from(findBoard);
+    }
 }
