@@ -1,6 +1,7 @@
 package com.juno.simple.board.service;
 
 import com.juno.simple.board.domain.BoardEntity;
+import com.juno.simple.board.domain.dto.BoardDeleteRequest;
 import com.juno.simple.board.domain.dto.BoardPostRequest;
 import com.juno.simple.board.domain.dto.BoardPutRequest;
 import com.juno.simple.board.domain.response.BoardListResponse;
@@ -70,5 +71,20 @@ public class BoardService {
 
         findBoard.put(boardPutRequest);
         return BoardResponse.from(findBoard);
+    }
+
+    @Transactional
+    public BoardResponse deleteBoard(BoardDeleteRequest boardDeleteRequest, HttpServletRequest request) {
+        BoardEntity findBoard = boardRepository.findById(boardDeleteRequest.getBoardId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는게시글입니다.")
+        );
+        
+        long memberId = Long.parseLong(request.getAttribute("memberId").toString());
+        if (! findBoard.getMember().getMemberId().equals(memberId)) {
+            throw new IllegalArgumentException("게시글 등록자만 삭제 가능합니다.");
+        }
+
+        boardRepository.delete(findBoard);
+        return BoardResponse.delete(findBoard);
     }
 }

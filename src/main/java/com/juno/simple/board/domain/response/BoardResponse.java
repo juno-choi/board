@@ -32,4 +32,10 @@ public record BoardResponse(
                 .name(saveBoard.getMember().getName())
                 .build();
     }
+
+    public static BoardResponse delete(BoardEntity saveBoard) {
+        return BoardResponse.builder()
+                .boardId(saveBoard.getBoardId())
+                .build();
+    }
 }

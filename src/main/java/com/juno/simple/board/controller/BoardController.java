@@ -1,5 +1,6 @@
 package com.juno.simple.board.controller;
 
+import com.juno.simple.board.domain.dto.BoardDeleteRequest;
 import com.juno.simple.board.domain.dto.BoardPostRequest;
 import com.juno.simple.board.domain.dto.BoardPutRequest;
 import com.juno.simple.board.domain.response.BoardListResponse;
@@ -101,8 +102,25 @@ public class BoardController {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
     })
-    public ResponseEntity<Response<BoardResponse>> patch(@RequestBody @Validated BoardPutRequest boardPutRequest, BindingResult bindingResult, HttpServletRequest request) {
+    public ResponseEntity<Response<BoardResponse>> put(@RequestBody @Validated BoardPutRequest boardPutRequest, BindingResult bindingResult, HttpServletRequest request) {
         BoardResponse response = boardService.putBoard(boardPutRequest, request);
+        return ResponseEntity.ok(
+                Response.<BoardResponse>builder()
+                        .code(ResponseEnums.SUCCESS.code)
+                        .message(ResponseEnums.SUCCESS.message)
+                        .data(response)
+                        .build()
+        );
+    }
+
+    @DeleteMapping("")
+    @Operation(summary = "게시글 삭제", description = "게시글 삭제 api", security = @SecurityRequirement(name = AUTHORIZATION))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
+    })
+    public ResponseEntity<Response<BoardResponse>> delete(@RequestBody @Validated BoardDeleteRequest boardDeleteRequest, BindingResult bindingResult, HttpServletRequest request) {
+        BoardResponse response = boardService.deleteBoard(boardDeleteRequest, request);
         return ResponseEntity.ok(
                 Response.<BoardResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)
