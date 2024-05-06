@@ -9,7 +9,6 @@ import com.juno.simple.member.domain.response.LoginResponse;
 import com.juno.simple.member.domain.response.MemberResponse;
 import com.juno.simple.member.repository.MemberRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

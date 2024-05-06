@@ -75,7 +75,7 @@ public class BoardController {
     }
 
     @GetMapping("/{board_id}")
-    @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 api")
+    @Operation(summary = "게시글 상세 조회", description = "게시글 상세 조회 api", security = @SecurityRequirement(name = AUTHORIZATION))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -96,13 +96,13 @@ public class BoardController {
     }
 
     @PutMapping("")
-    @Operation(summary = "게시글 수정", description = "게시글 수정 api")
+    @Operation(summary = "게시글 수정", description = "게시글 수정 api", security = @SecurityRequirement(name = AUTHORIZATION))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "정상", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "500", description = "서버 에러", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)),
     })
-    public ResponseEntity<Response<BoardResponse>> patch(@RequestBody @Validated BoardPutRequest boardPutRequest, BindingResult bindingResult) {
-        BoardResponse response = boardService.putBoard(boardPutRequest);
+    public ResponseEntity<Response<BoardResponse>> patch(@RequestBody @Validated BoardPutRequest boardPutRequest, BindingResult bindingResult, HttpServletRequest request) {
+        BoardResponse response = boardService.putBoard(boardPutRequest, request);
         return ResponseEntity.ok(
                 Response.<BoardResponse>builder()
                         .code(ResponseEnums.SUCCESS.code)

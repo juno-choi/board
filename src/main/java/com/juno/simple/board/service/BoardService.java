@@ -30,8 +30,7 @@ public class BoardService {
 
     @Transactional
     public BoardResponse postBoard (BoardPostRequest boardPostRequest, HttpServletRequest request) {
-        Authentication authorization = tokenProvider.getAuthentication(request.getHeader("Authorization"));
-        Long memberId = Long.parseLong(authorization.getName());
+        Long memberId = Long.parseLong(request.getAttribute("memberId").toString());
         MemberEntity findMember = memberRepository.findById(memberId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         BoardEntity saveBoard = boardRepository.save(boardPostRequest.toEntity(findMember));
@@ -59,12 +58,13 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse putBoard(BoardPutRequest boardPutRequest) {
+    public BoardResponse putBoard(BoardPutRequest boardPutRequest, HttpServletRequest request) {
         BoardEntity findBoard = boardRepository.findById(boardPutRequest.getBoardId()).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는게시글입니다.")
         );
 
-        if (!boardPutRequest.equalsMember(findBoard)) {
+        long memberId = Long.parseLong(request.getAttribute("memberId").toString());
+        if (! findBoard.getMember().getMemberId().equals(memberId)) {
             throw new IllegalArgumentException("게시글 등록자만 수정 가능합니다.");
         }
 
